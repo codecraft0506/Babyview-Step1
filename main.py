@@ -1,12 +1,52 @@
 from pywinauto.application import Application
 from pywinauto import Desktop, mouse, keyboard
+from datetime import datetime, timedelta
 import time
+import json
 
-USERNAME = '10201'
-PASSWORD = '852456'
+# 載入設定檔
+with open("config.json", "r", encoding="utf-8") as f:
+    config = json.load(f)
+
+USERNAME = config["username"]
+PASSWORD = config["password"]
+SYPOS_PATH = config["sypos_path"]
+START_DATE_POS = tuple(config["start_date_pos"])
+END_DATE_POS = tuple(config["end_date_pos"])
+REPORT_TITLE = config["report_title"]
+OUTPUT_DIR = config["output_dir"]
+
+# 計算日期
+date_mode = config["date_mode"]
+advance = config["advance"]
+
+if date_mode == 'relative':
+    unit = config.get("period_unit", "days")
+    value = config.get("period_value", 1)
+    end = datetime.today() - timedelta(days=advance)
+
+    if unit == "days":
+        start = end - timedelta(days=value - 1)
+    elif unit == "weeks":
+        start = end - timedelta(weeks=value) + timedelta(days=1)
+    elif unit == "months":
+        from dateutil.relativedelta import relativedelta
+        start = end - relativedelta(months=value) + timedelta(days=1)
+    else:
+        raise ValueError("Unsupported period_unit in config.json")
+
+    START_DATE = start.strftime("%Y%m%d")
+    END_DATE = end.strftime("%Y%m%d")
+
+elif date_mode == 'fixed':
+    START_DATE = config["start_date"]
+    END_DATE = config["end_date"]
+    
+else:
+    raise ValueError("Unsupported date mode")
 
 def fill_date(x, y, date_str):
-    year, month, day = date_str.split("/")
+    year, month, day = date_str[0:4], date_str[4:6], date_str[6:8]
 
     mouse.click(coords=(x, y))
     time.sleep(0.3)
@@ -81,7 +121,7 @@ def wait_for_export_done_and_exit():
     app.kill()
 
 # 啟動主程式
-app = Application(backend="uia").start(r"C:\SYPOS\SYPOS.exe")
+app = Application(backend="uia").start(SYPOS_PATH)
 dlg = app.window(title="新儀科技資訊管理系統登錄作業")
 dlg.wait('visible', timeout=10)
 
@@ -108,9 +148,9 @@ shipment_dlg.child_window(title="全部資料", control_type="RadioButton").sele
 
 # 輸入日期
 time.sleep(1)
-fill_date(165, 131, "2025/5/1")
+fill_date(*START_DATE_POS, START_DATE)
 time.sleep(0.5)
-fill_date(282, 131, "2025/5/1")
+fill_date(*END_DATE_POS, END_DATE)
 
 time.sleep(5)
 
@@ -118,7 +158,8 @@ time.sleep(5)
 shipment_dlg.child_window(title="列印(P)", control_type="Button").invoke()
 
 # 選擇報表並輸出
-export("出　貨　單", r"C:\Github\Babyview-Step1\出貨單")
+file_path = f"{OUTPUT_DIR}\\{REPORT_TITLE.replace('　', '').replace(' ', '')}-{START_DATE}-{END_DATE}"
+export(REPORT_TITLE, file_path)
 
 # 等待轉存完成
 time.sleep(5)
