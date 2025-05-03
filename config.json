@@ -15,5 +15,14 @@
   "end_date": "20250501",
 
   "report_title": "出　貨　單",
-  "output_dir": "C:\\Github\\Babyview-Step1"
+  "output_dir": "C:\\Github\\Babyview-Step1",
+
+  "email": {
+  "enabled": true,
+  "smtp_server": "smtp.gmail.com",
+  "smtp_port": 587,
+  "from": "ryanchen0830b@gmail.com",
+  "password": "xjsb rhjn lzey pqrp",
+  "to": ["codecraft.workshop@gmail.com"]
+}
 }

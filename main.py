@@ -1,6 +1,9 @@
 from pywinauto.application import Application
 from pywinauto import Desktop, mouse, keyboard
 from datetime import datetime, timedelta
+import smtplib
+from email.message import EmailMessage
+import os
 import time
 import json
 
@@ -97,27 +100,47 @@ def export(report_title, save_path):
     except:
         pass  # 若沒出現覆蓋視窗，直接略過
     
-def wait_for_export_done_and_exit():
+def send_report_email(success, file_path):
+    email_conf = config.get("email", {})
+    if not email_conf.get("enabled", False):
+        return
+
+    msg = EmailMessage()
+    msg["Subject"] = f"📦 SYPOS 匯出報表 {'成功 ✅' if success else '失敗 ❌'}"
+    msg["From"] = email_conf["from"]
+    msg["To"] = ", ".join(email_conf["to"])
+    msg.set_content(f"報表匯出 {'成功' if success else '失敗'}。\n檔案路徑：{file_path if success else '無'}")
+
+    if success and os.path.exists(file_path):
+        with open(file_path, "rb") as f:
+            file_data = f.read()
+            file_name = os.path.basename(file_path)
+            msg.add_attachment(file_data, maintype="application", subtype="octet-stream", filename=file_name)
+
     try:
-        # 等待出現「轉存完畢」提示視窗，最長等 600 秒
+        with smtplib.SMTP(email_conf["smtp_server"], email_conf["smtp_port"]) as smtp:
+            smtp.starttls()
+            smtp.login(email_conf["from"], email_conf["password"])
+            smtp.send_message(msg)
+        print("📧 Email 已寄出")
+    except Exception as e:
+        print(f"❌ Email 寄送失敗：{e}")
+
+def wait_for_export_done_and_exit(file_path):
+    success = False
+    try:
         done_dlg = Desktop(backend="uia").window(title_re="進銷存管理.*")
         done_dlg.wait('visible', timeout=600)
-        
-        # 列出所有靜態文字控件內容
         static_texts = done_dlg.descendants()
         for ctrl in static_texts:
-            text = ctrl.window_text()
-            print(text)
-            if "OK" in text:
-                print("✅ 偵測到提示訊息：OK")
+            if "OK" in ctrl.window_text():
+                print("✅ 偵測到轉存完畢")
+                success = True
                 break
-        else:
-            print("⚠️ 找到視窗但沒有『OK』文字")
-
     except:
-        print("⚠️ 未偵測到『轉存完畢』提示，超時略過")
+        print("⚠️ 未偵測到提示，可能失敗")
 
-    # 最終關閉主程式
+    send_report_email(success, file_path)
     app.kill()
 
 # 啟動主程式
@@ -163,4 +186,4 @@ export(REPORT_TITLE, file_path)
 
 # 等待轉存完成
 time.sleep(5)
-wait_for_export_done_and_exit()
+wait_for_export_done_and_exit(f"{file_path}.csv")
