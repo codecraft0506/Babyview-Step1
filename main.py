@@ -1,10 +1,10 @@
 from pywinauto.application import Application
 from pywinauto import Desktop
-from dotenv import load_dotenv
 import os
 import time
 
-load_dotenv()
+USERNAME = '10201'
+PASSWORD = '852456'
 
 # 使用 uia 啟動主程式
 app = Application(backend="uia").start(r"C:\SYPOS\SYPOS.exe")
@@ -13,8 +13,8 @@ dlg.wait('visible', timeout=10)
 
 # 輸入帳密
 edits = dlg.descendants(control_type="Edit")
-edits[1].type_keys(os.getenv("USERNAME"), with_spaces=True)
-edits[0].type_keys(os.getenv("PASSWORD"), with_spaces=True)
+edits[1].type_keys(USERNAME, with_spaces=True)
+edits[0].type_keys(PASSWORD, with_spaces=True)
 dlg.child_window(title="確  定(S)", control_type="Button").click()
 
 time.sleep(5)
