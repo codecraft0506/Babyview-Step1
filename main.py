@@ -73,10 +73,15 @@ def export(report_title, save_path):
     save_btn.invoke()
 
     # 抓另存新檔對話框
+    windows = Desktop(backend="uia").windows()
+    for i, w in enumerate(windows):
+        print(f"{i}: {w.window_text()}")
+
     save_dlg = Desktop(backend="uia").window(title_re=".*(另存新檔|儲存|Save As).*")
     save_dlg.wait('visible', timeout=10)
 
     # 清除預設檔名並輸入新的
+    
     filename_edit = save_dlg.child_window(title="檔案名稱(N):", control_type="Edit")
     filename_edit.wait('enabled', timeout=5)
     filename_edit.click_input()
@@ -86,9 +91,8 @@ def export(report_title, save_path):
     keyboard.send_keys(save_path)
 
     # 點擊「存檔」
-    save_button = save_dlg.child_window(title="存檔(S)", control_type="Button")
-    save_button.wait('enabled', timeout=10)
-    save_button.click_input()
+    keyboard.send_keys('{ENTER}')
+    keyboard.send_keys('{ENTER}')
 
     # 如果檔案存在，處理覆蓋對話框
     try:
