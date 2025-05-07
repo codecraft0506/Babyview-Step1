@@ -169,6 +169,8 @@ shipment_dlg.wait('visible', timeout=10)
 shipment_dlg.child_window(title="單據日期", control_type="CheckBox").click_input()
 shipment_dlg.child_window(title="全部資料", control_type="RadioButton").select()
 
+shipment_dlg.print_control_identifiers()
+
 # 輸入日期
 time.sleep(1)
 fill_date(*START_DATE_POS, START_DATE)
