@@ -181,6 +181,9 @@ fill_date(*START_DATE_POS, START_DATE)
 time.sleep(0.5)
 fill_date(*END_DATE_POS, END_DATE)
 
+# 點擊「查詢(U)」
+shipment_dlg.child_window(title="查詢(U)", control_type="Button").invoke()
+
 time.sleep(5)
 
 # 點擊「列印(P)」
