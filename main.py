@@ -61,13 +61,16 @@ def fill_date(x, y, date_str):
     keyboard.send_keys(year)
 
 def generate_unique_filename(path):
-    base, ext = os.path.splitext(path)
+    file_name = path.split('\\')[-1]
+    dir = '\\'.join(path.split('\\')[0:-1])
     counter = 1
-    new_path = path
-    while os.path.exists(new_path):
-        new_path = f"{base}({counter}){ext}"
+    new_file_name = file_name
+    print(new_file_name)
+    while os.path.exists(f"{new_file_name}.csv"):
+        new_file_name = f"{file_name}({counter})"
+        print(new_file_name)
         counter += 1
-    return new_path
+    return f"{dir}\\{file_name}"
 
 def export(report_title, save_path):
     print_dlg = app.window(title_re=".*列印選擇視窗.*")
