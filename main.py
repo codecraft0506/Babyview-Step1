@@ -60,18 +60,6 @@ def fill_date(x, y, date_str):
     keyboard.send_keys("{RIGHT}")
     keyboard.send_keys(year)
 
-def generate_unique_filename(path):
-    file_name = path.split('\\')[-1]
-    dir = '\\'.join(path.split('\\')[0:-1])
-    counter = 1
-    new_file_name = file_name
-    print(new_file_name)
-    while os.path.exists(f"{new_file_name}.csv"):
-        new_file_name = f"{file_name}-{counter}"
-        print(new_file_name)
-        counter += 1
-    return f"{dir}\\{new_file_name}"
-
 def export(report_title, save_path):
     print_dlg = app.window(title_re=".*列印選擇視窗.*")
     print_dlg.wait('visible', timeout=10)
@@ -100,10 +88,7 @@ def export(report_title, save_path):
     keyboard.send_keys("{BACKSPACE 30}")
     time.sleep(0.2)
 
-    # 產生不重複的檔名
-    unique_save_path = generate_unique_filename(save_path)
-    print(unique_save_path)
-    keyboard.send_keys(unique_save_path)
+    keyboard.send_keys(save_path)
 
     # 點擊「存檔」
     keyboard.send_keys('{ENTER}')
@@ -205,7 +190,7 @@ time.sleep(5)
 shipment_dlg.child_window(title="列印(P)", control_type="Button").invoke()
 
 # 選擇報表並輸出
-file_path = f"{OUTPUT_DIR}\\{REPORT_TITLE.replace('　', '').replace(' ', '')}-{START_DATE}-{END_DATE}"
+file_path = f"{OUTPUT_DIR}\\{REPORT_TITLE}"
 export(REPORT_TITLE, file_path)
 
 # 等待轉存完成
