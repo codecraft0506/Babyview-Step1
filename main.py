@@ -67,7 +67,7 @@ def generate_unique_filename(path):
     new_file_name = file_name
     print(new_file_name)
     while os.path.exists(f"{new_file_name}.csv"):
-        new_file_name = f"{file_name}({counter})"
+        new_file_name = f"{file_name}-{counter}"
         print(new_file_name)
         counter += 1
     return f"{dir}\\{new_file_name}"
