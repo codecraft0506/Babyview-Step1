@@ -70,7 +70,7 @@ def generate_unique_filename(path):
         new_file_name = f"{file_name}({counter})"
         print(new_file_name)
         counter += 1
-    return f"{dir}\\{file_name}"
+    return f"{dir}\\{new_file_name}"
 
 def export(report_title, save_path):
     print_dlg = app.window(title_re=".*列印選擇視窗.*")
