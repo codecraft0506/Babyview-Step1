@@ -99,6 +99,7 @@ def export(report_title, save_path):
 
     # 產生不重複的檔名
     unique_save_path = generate_unique_filename(save_path)
+    print(unique_save_path)
     keyboard.send_keys(unique_save_path)
 
     # 點擊「存檔」
