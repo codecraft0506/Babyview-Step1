@@ -60,6 +60,15 @@ def fill_date(x, y, date_str):
     keyboard.send_keys("{RIGHT}")
     keyboard.send_keys(year)
 
+def generate_unique_filename(path):
+    base, ext = os.path.splitext(path)
+    counter = 1
+    new_path = path
+    while os.path.exists(new_path):
+        new_path = f"{base}({counter}){ext}"
+        counter += 1
+    return new_path
+
 def export(report_title, save_path):
     print_dlg = app.window(title_re=".*列印選擇視窗.*")
     print_dlg.wait('visible', timeout=10)
@@ -81,14 +90,16 @@ def export(report_title, save_path):
     save_dlg.wait('visible', timeout=10)
 
     # 清除預設檔名並輸入新的
-    
     filename_edit = save_dlg.child_window(title="檔案名稱(N):", control_type="Edit")
     filename_edit.wait('enabled', timeout=5)
     filename_edit.click_input()
     time.sleep(0.2)
     keyboard.send_keys("{BACKSPACE 30}")
     time.sleep(0.2)
-    keyboard.send_keys(save_path)
+
+    # 產生不重複的檔名
+    unique_save_path = generate_unique_filename(save_path)
+    keyboard.send_keys(unique_save_path)
 
     # 點擊「存檔」
     keyboard.send_keys('{ENTER}')
@@ -102,7 +113,7 @@ def export(report_title, save_path):
         yes_btn.wait('enabled', timeout=3)
         yes_btn.click_input()
     except:
-        pass  # 若沒出現覆蓋視窗，直接略過
+        pass
     
 def send_report_email(success, file_path):
     email_conf = config.get("email", {})
