@@ -1,8 +1,8 @@
 {
-  "sypos_path": "C:\\SYPOS\\SYPOS.exe",
+  "sypos_path": "C:\\Users\\User\\Desktop\\新儀科技後台安裝軟體\\SYPOS\\SYPOS.exe",
 
-  "start_date_pos": [165, 131],
-  "end_date_pos": [282, 131],
+  "start_date_pos": [610, 286],
+  "end_date_pos": [730, 286],
 
   "username": "10201",
   "password": "852456",
@@ -15,7 +15,7 @@
   "end_date": "20250501",
 
   "report_title": "出　貨　單",
-  "output_dir": "C:\\Github\\Babyview-Step1",
+  "output_dir": "C:\\Users\\User\\Babyview-Step1",
 
   "email": {
   "enabled": true,
@@ -23,6 +23,6 @@
   "smtp_port": 587,
   "from": "ryanchen0830b@gmail.com",
   "password": "xjsb rhjn lzey pqrp",
-  "to": ["codecraft.workshop@gmail.com"]
+  "to": ["ryan@team.codecraft.services"]
 }
 }
