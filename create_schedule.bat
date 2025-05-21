@@ -2,7 +2,7 @@
 
 :: === 設定參數 ===
 set TASK_NAME=Babyview_GUI_5min
-set BAT_PATH=C:\Users\User\Babyview-Step1\run_report.bat
+set BAT_PATH=C:\Users\User\Babyview-Step1\run.bat
 set USERNAME=%USERNAME%
 set FREQUENCY=MINUTE
 set INTERVAL=5
