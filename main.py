@@ -130,20 +130,25 @@ def send_report_email(success, file_path):
     except Exception as e:
         print(f"❌ Email 寄送失敗：{e}")
 
-def wait_for_export_done_and_exit(file_path):
-    success = False
-    try:
-        done_dlg = Desktop(backend="uia").window(title_re="進銷存管理.*")
-        done_dlg.wait('visible', timeout=600)
-        static_texts = done_dlg.descendants()
-        for ctrl in static_texts:
-            if "OK" in ctrl.window_text():
-                print("✅ 偵測到轉存完畢")
-                success = True
-                break
-    except:
-        print("⚠️ 未偵測到提示，可能失敗")
+def wait_for_file(file_path, timeout=300, check_interval=3):
+    start_time = time.time()
+    last_size = -1
 
+    while time.time() - start_time < timeout:
+        if os.path.exists(file_path):
+            current_size = os.path.getsize(file_path)
+            if current_size > 0:
+                if current_size == last_size:
+                    print("✅ 偵測到檔案生成並完成")
+                    return True
+                last_size = current_size
+        time.sleep(check_interval)
+    
+    print("❌ 等待檔案超時或大小未穩定")
+    return False
+
+def wait_for_export_done_and_exit(file_path):
+    success = wait_for_file(file_path)
     send_report_email(success, file_path)
     app.kill()
 
